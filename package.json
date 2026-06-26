@@ -1,0 +1,11 @@
+{
+  "name": "motionkit-pro-figma-plugin",
+  "version": "2.0.0",
+  "description": "MotionKit Pro - Professional motion design suite for Figma with 12 animation presets, custom keyframe builder, interactive easing/spring curve editors, advanced stagger engines, and multi-framework code export (CSS, Tailwind, Framer Motion, GSAP, Web Animations API).",
+  "main": "code.js",
+  "scripts": {
+    "build": "echo \"Vanilla plugin - no compilation or build step required. MotionKit is immediately loadable and runnable in Figma using manifest.json!\""
+  },
+  "author": "",
+  "license": "ISC"
+}

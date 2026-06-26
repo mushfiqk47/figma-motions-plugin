@@ -1,0 +1,1960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MotionKit Pro UI</title>
+  <!-- Google Fonts for Outfit and JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    /* Premium dark UI variables */
+    :root {
+      --bg-dark: #09090b;
+      --bg-panel: #18181b;
+      --bg-card: #27272a;
+      --bg-card-hover: #3f3f46;
+      --bg-input: #09090b;
+      --border-dark: #27272a;
+      --border-light: #3f3f46;
+      --accent-purple: #8b5cf6;
+      --accent-pink: #ec4899;
+      --accent-gradient: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+      --text-primary: #f4f4f5;
+      --text-muted: #a1a1aa;
+      --text-dim: #71717a;
+      --success-green: #10b981;
+      --font-outfit: 'Outfit', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-primary);
+      font-family: var(--font-outfit);
+      font-size: 12px;
+      line-height: 1.5;
+      width: 320px;
+      height: 560px;
+      overflow-x: hidden;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Custom scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-dark);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-dark);
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--border-light);
+    }
+
+    /* Header */
+    header {
+      padding: 12px 14px;
+      background-color: rgba(9, 9, 9, 0.85);
+      border-bottom: 1px solid var(--border-dark);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-logo {
+      width: 14px;
+      height: 14px;
+      background: var(--accent-gradient);
+      border-radius: 4px;
+      box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+    }
+
+    .brand-name {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .selection-pill {
+      background-color: rgba(139, 92, 246, 0.1);
+      border: 1px solid rgba(139, 92, 246, 0.2);
+      color: var(--accent-purple);
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 500;
+      max-width: 130px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      transition: all 0.2s ease;
+    }
+
+    .selection-pill.empty {
+      background-color: rgba(113, 113, 122, 0.1);
+      border-color: rgba(113, 113, 122, 0.2);
+      color: var(--text-muted);
+    }
+
+    /* Main Area */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 14px;
+      gap: 14px;
+    }
+
+    /* Canvas State Screens */
+    #screen-empty {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 20px;
+      gap: 16px;
+    }
+
+    .empty-graphic {
+      position: relative;
+      width: 70px;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .empty-ring {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border: 2px dashed rgba(139, 92, 246, 0.2);
+      border-radius: 50%;
+      animation: spin-slow 20s linear infinite;
+    }
+
+    .empty-spark {
+      font-size: 28px;
+      color: var(--accent-purple);
+      text-shadow: 0 0 15px rgba(139, 92, 246, 0.8);
+    }
+
+    @keyframes spin-slow {
+      100% { transform: rotate(360deg); }
+    }
+
+    .empty-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .empty-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      max-width: 200px;
+      line-height: 1.5;
+    }
+
+    #screen-workspace {
+      display: none;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* Section Typography */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .section-title {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    /* Presets Grid Slider */
+    .presets-container {
+      position: relative;
+      margin-bottom: 4px;
+    }
+
+    .presets-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      max-height: 190px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+
+    .preset-card {
+      background-color: var(--bg-panel);
+      border: 1px solid var(--border-dark);
+      border-radius: 8px;
+      padding: 10px;
+      height: 85px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .preset-card:hover {
+      background-color: var(--bg-card);
+      border-color: var(--border-light);
+      transform: translateY(-1px);
+    }
+
+    .preset-card.active {
+      background-color: rgba(139, 92, 246, 0.06);
+      border: 1.5px solid var(--accent-purple);
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.12);
+    }
+
+    .preset-card.active::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 0 16px 16px 0;
+      border-color: transparent var(--accent-purple) transparent transparent;
+    }
+
+    .preset-card-title {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .preset-card-desc {
+      font-size: 9px;
+      color: var(--text-muted);
+      line-height: 1.3;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* Sub-Workspace navigation */
+    .tabs-nav {
+      display: flex;
+      background-color: var(--bg-panel);
+      border-radius: 6px;
+      padding: 2px;
+      border: 1px solid var(--border-dark);
+    }
+
+    .tab-button {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-muted);
+      font-family: var(--font-outfit);
+      font-size: 11px;
+      font-weight: 500;
+      padding: 6px 0;
+      border-radius: 4px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    .tab-button.active {
+      background-color: var(--bg-card);
+      color: var(--text-primary);
+    }
+
+    /* Tab Contents */
+    .tab-content {
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      background-color: var(--bg-panel);
+      border: 1px solid var(--border-dark);
+      border-radius: 8px;
+      padding: 12px;
+    }
+
+    .tab-content.active {
+      display: flex;
+    }
+
+    /* Control Elements */
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .control-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .control-label-text {
+      color: var(--text-primary);
+    }
+
+    .control-label-val {
+      color: var(--accent-pink);
+      font-family: var(--font-mono);
+      font-size: 10px;
+    }
+
+    /* Visual Easing Curve Editor Canvas */
+    .curve-editor-container {
+      background-color: var(--bg-dark);
+      border: 1px solid var(--border-dark);
+      border-radius: 6px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #curve-canvas-svg {
+      width: 110px;
+      height: 110px;
+      background-color: #060608;
+      border-radius: 4px;
+      cursor: crosshair;
+      touch-action: none;
+    }
+
+    .bezier-grid {
+      stroke: #18181b;
+      stroke-width: 1;
+    }
+
+    .bezier-curve-path {
+      stroke: url(#curve-gradient);
+      stroke-width: 3;
+      fill: none;
+    }
+
+    .bezier-handle-line {
+      stroke: var(--text-dim);
+      stroke-width: 1;
+      stroke-dasharray: 2, 2;
+    }
+
+    .bezier-handle-point {
+      fill: var(--text-primary);
+      stroke: var(--accent-purple);
+      stroke-width: 2;
+      cursor: pointer;
+    }
+
+    .bezier-handle-point:hover {
+      fill: var(--accent-pink);
+    }
+
+    /* Sliders and Range Inputs */
+    .control-value {
+      color: var(--accent-pink);
+      font-family: var(--font-mono);
+      font-size: 10px;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--border-dark);
+      outline: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--accent-purple);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      box-shadow: 0 0 6px rgba(139, 92, 246, 0.5);
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      background: var(--accent-pink);
+      transform: scale(1.2);
+    }
+
+    /* Select elements */
+    select {
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-dark);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-family: var(--font-outfit);
+      font-size: 11px;
+      padding: 8px 10px;
+      outline: none;
+      cursor: pointer;
+      width: 100%;
+      transition: border-color 0.2s ease;
+    }
+
+    select:focus {
+      border-color: var(--accent-purple);
+    }
+
+    /* Segmented Controls */
+    .segmented-control {
+      display: flex;
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-dark);
+      border-radius: 6px;
+      padding: 2px;
+      width: 100%;
+    }
+
+    .segment-item {
+      flex: 1;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: var(--font-outfit);
+      font-size: 10px;
+      font-weight: 500;
+      padding: 5px 0;
+      border-radius: 4px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    .segment-item.active {
+      background-color: var(--accent-purple);
+      color: #fff;
+    }
+
+    /* Custom Keyframe Builder styling */
+    .keyframe-stops {
+      display: flex;
+      justify-content: space-between;
+      background-color: var(--bg-dark);
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border-dark);
+      position: relative;
+    }
+
+    .keyframe-stops::after {
+      content: '';
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      top: calc(50% - 1px);
+      height: 2px;
+      background-color: var(--border-dark);
+      z-index: 1;
+    }
+
+    .stop-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background-color: var(--bg-panel);
+      border: 2px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 8px;
+      font-weight: 700;
+      color: var(--text-muted);
+      z-index: 2;
+      transition: all 0.2s ease;
+    }
+
+    .stop-dot.active {
+      background-color: var(--accent-purple);
+      border-color: var(--accent-purple);
+      color: #fff;
+      box-shadow: 0 0 8px var(--accent-purple);
+    }
+
+    .stop-dot.configured {
+      border-color: var(--accent-pink);
+    }
+
+    .keyframe-properties-editor {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background-color: var(--bg-dark);
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border-dark);
+    }
+
+    /* Scrubbable Live Preview Timeline */
+    .preview-timeline-box {
+      background-color: var(--bg-panel);
+      border: 1px solid var(--border-dark);
+      border-radius: 8px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .preview-canvas-container {
+      background-color: var(--bg-dark);
+      border: 1px dashed var(--border-dark);
+      border-radius: 6px;
+      height: 75px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    #preview-element {
+      width: 32px;
+      height: 32px;
+      background: var(--accent-gradient);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 12px;
+      font-weight: bold;
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+      transform-origin: center;
+    }
+
+    .preview-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .play-btn {
+      background: var(--accent-gradient);
+      border: none;
+      outline: none;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #fff;
+      font-size: 10px;
+      box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
+      transition: all 0.2s ease;
+    }
+
+    .play-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .scrub-bar-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .scrub-bar-time {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--text-muted);
+      width: 28px;
+    }
+
+    /* Export Panel */
+    .export-tabs {
+      display: flex;
+      background-color: var(--bg-input);
+      border-radius: 6px;
+      padding: 2px;
+      border: 1px solid var(--border-dark);
+      margin-bottom: 8px;
+    }
+
+    .export-tab {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-muted);
+      font-family: var(--font-outfit);
+      font-size: 9px;
+      font-weight: 500;
+      padding: 4px 0;
+      border-radius: 4px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    .export-tab.active {
+      background-color: var(--bg-card);
+      color: var(--text-primary);
+    }
+
+    .textarea-container {
+      position: relative;
+    }
+
+    textarea {
+      width: 100%;
+      height: 100px;
+      background-color: #060608;
+      border: 1px solid var(--border-dark);
+      border-radius: 6px;
+      color: #38bdf8; /* light blue */
+      font-family: var(--font-mono);
+      font-size: 9px;
+      padding: 8px;
+      resize: none;
+      outline: none;
+    }
+
+    /* Sticky Bottom Actions */
+    .sticky-footer {
+      background: linear-gradient(to top, var(--bg-dark) 85%, transparent 100%);
+      padding: 10px 14px 14px 14px;
+      border-top: 1px solid rgba(39, 39, 42, 0.5);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: sticky;
+      bottom: 0;
+      z-index: 90;
+      margin-top: auto;
+    }
+
+    .btn {
+      width: 100%;
+      height: 38px;
+      border-radius: 6px;
+      font-family: var(--font-outfit);
+      font-size: 11px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent-gradient);
+      color: #ffffff;
+      box-shadow: 0 2px 10px rgba(139, 92, 246, 0.25);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary:disabled {
+      background: var(--border-dark);
+      color: var(--text-dim);
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border: 1px solid var(--border-light);
+      color: var(--text-primary);
+      height: 34px;
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--border-dark);
+      border-color: var(--text-muted);
+    }
+
+    .btn-secondary:disabled {
+      border-color: var(--border-dark);
+      color: var(--text-dim);
+      cursor: not-allowed;
+    }
+
+    /* Inline elements and utilities */
+    .icon-svg {
+      width: 12px;
+      height: 12px;
+      fill: currentColor;
+    }
+
+    input[type="range"]:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    input[type="checkbox"] {
+      accent-color: var(--accent-purple);
+      cursor: pointer;
+    }
+
+    /* Smooth entrance for workspace */
+    #screen-workspace {
+      animation: fadeInPanel 0.3s ease forwards;
+    }
+
+    @keyframes fadeInPanel {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sticky Header -->
+  <header>
+    <div class="brand">
+      <div class="brand-logo"></div>
+      <div class="brand-name">MotionKit Pro</div>
+    </div>
+    <div id="selection-pill" class="selection-pill empty">No Selection</div>
+  </header>
+
+  <!-- Main Area -->
+  <main>
+    <!-- Screen: Empty Selection State -->
+    <div id="screen-empty">
+      <div class="empty-graphic">
+        <div class="empty-ring"></div>
+        <div class="empty-spark">✦</div>
+      </div>
+      <div class="empty-title">Establish Canvas Target</div>
+      <div class="empty-desc">Select a Frame, Component, or Instance in Figma to begin applying timelines.</div>
+    </div>
+
+    <!-- Screen: Workspace State -->
+    <div id="screen-workspace">
+      <!-- Section: Presets Grid -->
+      <div class="presets-container">
+        <div class="section-header">
+          <span class="section-title">Standard Presets</span>
+        </div>
+        <div class="presets-grid" id="presets-grid-container">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </div>
+
+      <!-- Navigation tabs -->
+      <div class="tabs-nav">
+        <button class="tab-button active" onclick="switchWorkspaceTab('params')">Parameters</button>
+        <button class="tab-button" onclick="switchWorkspaceTab('stagger')">Staggering</button>
+        <button class="tab-button" onclick="switchWorkspaceTab('custom')">Custom Builder</button>
+      </div>
+
+      <!-- Workspace Tab 1: Parameters -->
+      <div id="tab-params" class="tab-content active">
+        <!-- Easing Selection and Visual Curve Editor -->
+        <div class="control-group">
+          <div class="control-label-row">
+            <span class="control-label-text">Easing Curve</span>
+          </div>
+          <select id="easing" onchange="onEasingChanged(this.value)">
+            <option value="ease">ease (cubic-bezier)</option>
+            <option value="ease-in">ease-in</option>
+            <option value="ease-out">ease-out</option>
+            <option value="ease-in-out">ease-in-out</option>
+            <option value="linear">linear</option>
+            <option value="spring">spring (native physical)</option>
+            <option value="custom-bezier">Custom Bezier (interactive)</option>
+            <option value="custom-spring">Custom Spring (physics)</option>
+          </select>
+        </div>
+
+        <!-- Interactive Easing Curve Graphic -->
+        <div class="curve-editor-container" id="curve-editor-block" style="display: none;">
+          <svg id="curve-canvas-svg" viewBox="0 0 120 120">
+            <defs>
+              <linearGradient id="curve-gradient" x1="0%" y1="100%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#8b5cf6" />
+                <stop offset="100%" stop-color="#ec4899" />
+              </linearGradient>
+            </defs>
+            <!-- Guide Lines -->
+            <line x1="0" y1="120" x2="120" y2="0" stroke="#1f1f23" stroke-width="1" />
+            <!-- Axis lines -->
+            <line x1="0" y1="0" x2="0" y2="120" stroke="#27272a" stroke-width="1" />
+            <line x1="0" y1="120" x2="120" y2="120" stroke="#27272a" stroke-width="1" />
+            
+            <!-- Dynamic bezier path -->
+            <path class="bezier-curve-path" d="M 0 120 C 30 120, 90 0, 120 0" />
+            
+            <!-- Handle lines -->
+            <line class="bezier-handle-line" id="handle-line-1" x1="0" y1="120" x2="30" y2="120" />
+            <line class="bezier-handle-line" id="handle-line-2" x1="120" y1="0" x2="90" y2="0" />
+            
+            <!-- Handle points -->
+            <circle class="bezier-handle-point" id="handle-point-1" cx="30" cy="120" r="5" />
+            <circle class="bezier-handle-point" id="handle-point-2" cx="90" cy="0" r="5" />
+          </svg>
+          <div style="display: flex; gap: 14px; font-size: 9px; color: var(--text-muted);">
+            <div>P1: <span id="bezier-p1-text" style="color:var(--accent-pink);">0.25, 0.10</span></div>
+            <div>P2: <span id="bezier-p2-text" style="color:var(--accent-pink);">0.25, 1.00</span></div>
+          </div>
+        </div>
+
+        <!-- Custom Spring Parameters Block -->
+        <div class="curve-editor-container" id="spring-editor-block" style="display: none; gap: 8px;">
+          <!-- SVG curve for spring oscillation -->
+          <svg id="spring-oscillation-svg" width="240" height="60" style="background-color: #060608; border-radius: 4px;">
+            <path id="spring-curve-path" stroke="url(#curve-gradient)" stroke-width="2" fill="none" d="" />
+            <line x1="0" y1="30" x2="240" y2="30" stroke="#18181b" stroke-width="1" stroke-dasharray="2,2" />
+          </svg>
+          
+          <!-- Spring parameters sliders -->
+          <div style="width: 100%; display: flex; flex-direction: column; gap: 6px;">
+            <div class="control-group">
+              <div class="control-label-row">
+                <span style="font-size: 9px; color: var(--text-muted);">Mass (stiffness inertia)</span>
+                <span id="spring-mass-val" class="control-value" style="font-size: 9px;">1.0</span>
+              </div>
+              <input type="range" id="spring-mass" min="0.1" max="4.0" step="0.1" value="1.0" oninput="updateSpringParam('mass', this.value)">
+            </div>
+            <div class="control-group">
+              <div class="control-label-row">
+                <span style="font-size: 9px; color: var(--text-muted);">Stiffness (spring rate)</span>
+                <span id="spring-stiff-val" class="control-value" style="font-size: 9px;">100</span>
+              </div>
+              <input type="range" id="spring-stiffness" min="10" max="300" step="5" value="100" oninput="updateSpringParam('stiffness', this.value)">
+            </div>
+            <div class="control-group">
+              <div class="control-label-row">
+                <span style="font-size: 9px; color: var(--text-muted);">Damping (friction rate)</span>
+                <span id="spring-damp-val" class="control-value" style="font-size: 9px;">15</span>
+              </div>
+              <input type="range" id="spring-damping" min="1" max="50" step="1" value="15" oninput="updateSpringParam('damping', this.value)">
+            </div>
+          </div>
+        </div>
+
+        <!-- Duration Slider -->
+        <div class="control-group">
+          <div class="control-label-row">
+            <span class="control-label-text">Duration</span>
+            <span id="duration-val" class="control-label-val">600ms</span>
+          </div>
+          <input type="range" id="duration" min="100" max="8000" step="50" value="600" oninput="updateSlider('duration', this.value, 'ms')">
+        </div>
+
+        <!-- Delay Slider -->
+        <div class="control-group">
+          <div class="control-label-row">
+            <span class="control-label-text">Delay</span>
+            <span id="delay-val" class="control-label-val">0ms</span>
+          </div>
+          <input type="range" id="delay" min="0" max="4000" step="50" value="0" oninput="updateSlider('delay', this.value, 'ms')">
+        </div>
+
+        <!-- Direction Segmented -->
+        <div class="control-group">
+          <div class="control-label-row">
+            <span class="control-label-text">Playback Direction</span>
+          </div>
+          <div class="segmented-control">
+            <button class="segment-item active" data-dir="normal" onclick="setDirection('normal')">Normal</button>
+            <button class="segment-item" data-dir="reverse" onclick="setDirection('reverse')">Reverse</button>
+            <button class="segment-item" data-dir="alternate" onclick="setDirection('alternate')">Alternate</button>
+          </div>
+        </div>
+
+        <!-- Motion Intensity Slider -->
+        <div class="control-group">
+          <div class="control-label-row">
+            <span class="control-label-text">Offset Scale (Intensity)</span>
+            <span id="intensity-val" class="control-label-val">1.0x</span>
+          </div>
+          <input type="range" id="intensity" min="0.2" max="2.5" step="0.1" value="1.0" oninput="updateSlider('intensity', this.value, 'x')">
+        </div>
+      </div>
+
+      <!-- Workspace Tab 2: Staggering -->
+      <div id="tab-stagger" class="tab-content">
+        <div class="control-group" style="flex-direction: row; justify-content: space-between; align-items: center; background-color: var(--bg-dark); padding: 8px 10px; border-radius: 6px; border: 1px solid var(--border-dark);">
+          <span class="control-label-text">Enable Staggered Layers</span>
+          <input type="checkbox" id="stagger-toggle" checked onchange="toggleStagger(this.checked)" style="width: 16px; height: 16px; accent-color: var(--accent-purple); cursor: pointer;">
+        </div>
+
+        <div id="stagger-controls-block" style="display: flex; flex-direction: column; gap: 12px;">
+          <!-- Stagger Order Sequence -->
+          <div class="control-group">
+            <div class="control-label-row">
+              <span class="control-label-text">Sequencing Order</span>
+            </div>
+            <select id="stagger-order" onchange="onStaggerParamChanged()">
+              <option value="forward">Forward (first layer to last)</option>
+              <option value="reverse">Reverse (last layer to first)</option>
+              <option value="center">Center-Out (radial settlement)</option>
+              <option value="random">Random (organic noise)</option>
+            </select>
+          </div>
+
+          <!-- Stagger Delay (ms) -->
+          <div class="control-group">
+            <div class="control-label-row">
+              <span class="control-label-text">Stagger Delay</span>
+              <span id="stagger-delay-val" class="control-label-val">100ms</span>
+            </div>
+            <input type="range" id="stagger-delay" min="20" max="1000" step="10" value="100" oninput="updateSlider('stagger-delay', this.value, 'ms')">
+          </div>
+          
+          <div style="font-size: 9px; color: var(--text-muted); line-height: 1.4; padding: 4px; border-left: 2px solid var(--accent-purple); background: rgba(139,92,246,0.03);">
+            This applies sequential delays to the children of the selected frame node. Elements are animated with an intensity scaled down to 40% of the parent container's, creating clean, layered spatial depth.
+          </div>
+        </div>
+      </div>
+
+      <!-- Workspace Tab 3: Custom Keyframe Builder -->
+      <div id="tab-custom" class="tab-content">
+        <div style="font-size: 10px; color: var(--text-muted); margin-bottom: 4px;">
+          Create a custom motion path by mapping properties to timeline stops.
+        </div>
+
+        <!-- Stops Timeline row -->
+        <div class="control-group">
+          <span class="control-label-text" style="font-size: 10px;">Select Keyframe Position:</span>
+          <div class="keyframe-stops">
+            <div class="stop-dot active" data-stop="0" onclick="selectKeyframeStop(0)">0%</div>
+            <div class="stop-dot" data-stop="25" onclick="selectKeyframeStop(25)">25%</div>
+            <div class="stop-dot" data-stop="50" onclick="selectKeyframeStop(50)">50%</div>
+            <div class="stop-dot" data-stop="75" onclick="selectKeyframeStop(75)">75%</div>
+            <div class="stop-dot" data-stop="100" onclick="selectKeyframeStop(100)">100%</div>
+          </div>
+        </div>
+
+        <!-- Keyframe properties panel -->
+        <div class="keyframe-properties-editor">
+          <div style="font-size: 10px; font-weight: 600; border-bottom: 1px solid var(--border-dark); padding-bottom: 4px; margin-bottom: 4px;">
+            Configure Properties at <span id="active-stop-label" style="color: var(--accent-purple);">0%</span>:
+          </div>
+
+          <!-- Opacity Slider -->
+          <div class="control-group">
+            <div class="control-label-row">
+              <span style="font-size: 10px;"><input type="checkbox" id="prop-opacity-enable" onchange="toggleKeyframeProp('opacity', this.checked)" style="margin-right: 4px;"> Opacity</span>
+              <span id="kf-opacity-val" class="control-label-val">1.0</span>
+            </div>
+            <input type="range" id="kf-opacity" min="0" max="1" step="0.05" value="1" oninput="updateKeyframeVal('opacity', this.value)">
+          </div>
+
+          <!-- Translate X -->
+          <div class="control-group">
+            <div class="control-label-row">
+              <span style="font-size: 10px;"><input type="checkbox" id="prop-x-enable" onchange="toggleKeyframeProp('x', this.checked)" style="margin-right: 4px;"> Translate X</span>
+              <span id="kf-x-val" class="control-label-val">0px</span>
+            </div>
+            <input type="range" id="kf-x" min="-200" max="200" step="5" value="0" oninput="updateKeyframeVal('x', this.value)">
+          </div>
+
+          <!-- Translate Y -->
+          <div class="control-group">
+            <div class="control-label-row">
+              <span style="font-size: 10px;"><input type="checkbox" id="prop-y-enable" onchange="toggleKeyframeProp('y', this.checked)" style="margin-right: 4px;"> Translate Y</span>
+              <span id="kf-y-val" class="control-label-val">0px</span>
+            </div>
+            <input type="range" id="kf-y" min="-200" max="200" step="5" value="0" oninput="updateKeyframeVal('y', this.value)">
+          </div>
+
+          <!-- Scale (Uniform) -->
+          <div class="control-group">
+            <div class="control-label-row">
+              <span style="font-size: 10px;"><input type="checkbox" id="prop-scale-enable" onchange="toggleKeyframeProp('scale', this.checked)" style="margin-right: 4px;"> Scale</span>
+              <span id="kf-scale-val" class="control-label-val">1.0x</span>
+            </div>
+            <input type="range" id="kf-scale" min="0.2" max="2.5" step="0.05" value="1" oninput="updateKeyframeVal('scale', this.value)">
+          </div>
+
+          <!-- Rotation -->
+          <div class="control-group">
+            <div class="control-label-row">
+              <span style="font-size: 10px;"><input type="checkbox" id="prop-rotation-enable" onchange="toggleKeyframeProp('rotation', this.checked)" style="margin-right: 4px;"> Rotation</span>
+              <span id="kf-rotation-val" class="control-label-val">0°</span>
+            </div>
+            <input type="range" id="kf-rotation" min="-360" max="360" step="5" value="0" oninput="updateKeyframeVal('rotation', this.value)">
+          </div>
+        </div>
+      </div>
+
+      <!-- Scrubbable Live Preview Timeline -->
+      <div class="preview-timeline-box">
+        <div class="section-header" style="margin-bottom: 4px;">
+          <span class="section-title">Live Preview Timeline</span>
+        </div>
+        <div class="preview-canvas-container">
+          <div id="preview-element">✦</div>
+        </div>
+        <div class="preview-controls">
+          <button class="play-btn" id="preview-play-btn" onclick="togglePlayPreview()" title="Play / Pause Animation">▶</button>
+          <div class="scrub-bar-container">
+            <input type="range" id="preview-scrubber" min="0" max="100" value="0" oninput="scrubPreview(this.value)" style="flex: 1;">
+            <span class="scrub-bar-time" id="preview-time-text">0.0s</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Export Panel -->
+      <div class="control-group">
+        <div class="section-header" style="margin-bottom: 4px;">
+          <span class="section-title">Export Code</span>
+        </div>
+        <div class="export-tabs">
+          <button class="export-tab active" data-format="css" onclick="switchExportTab('css')">CSS</button>
+          <button class="export-tab" data-format="tailwind" onclick="switchExportTab('tailwind')">Tailwind</button>
+          <button class="export-tab" data-format="framer" onclick="switchExportTab('framer')">Framer</button>
+          <button class="export-tab" data-format="gsap" onclick="switchExportTab('gsap')">GSAP</button>
+          <button class="export-tab" data-format="webanim" onclick="switchExportTab('webanim')">WebAPI</button>
+        </div>
+        <div class="textarea-container">
+          <textarea id="code-output" readonly onclick="this.select()"></textarea>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Sticky Actions Footer -->
+  <div class="sticky-footer">
+    <button id="apply-btn" class="btn btn-primary" onclick="applyPresetToCanvas()" disabled>
+      <svg class="icon-svg" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      Apply to Canvas
+    </button>
+    <button id="copy-btn" class="btn btn-secondary" onclick="copyExportedCode()" disabled>
+      Copy Code Block
+    </button>
+  </div>
+
+  <!-- Main JavaScript Interface -->
+  <script>
+    // Global States
+    var activePresetId = null;
+    var activeDirection = 'normal';
+    var activeTab = 'params';
+    var activeExportFormat = 'css';
+    var hasSelection = false;
+
+    // Bezier Coordinates (Initial = ease: 0.25, 0.1, 0.25, 1)
+    var bezierPoints = [0.25, 0.10, 0.25, 1.00];
+    
+    // Spring Parameters
+    var springParams = {
+      mass: 1.0,
+      stiffness: 100,
+      damping: 15
+    };
+
+    // Custom Keyframes Database
+    var customKeyframes = {
+      "0":   { opacity: 0, x: -60, y: 0, scaleX: 0.7, scaleY: 0.7, rotation: 0 },
+      "100": { opacity: 1, x: 0,  y: 0, scaleX: 1,   scaleY: 1,   rotation: 0 }
+    };
+    var activeStop = 0;
+
+    // Live Preview Player State
+    var isPlaying = false;
+    var previewAnimFrame = null;
+    var previewStartTime = null;
+
+    // Defined Motion Presets for UI Display
+    var PRESETS_DATA = [
+      { id: "fadeIn", label: "Fade In", desc: "Opacity transitions 0 to 1" },
+      { id: "slideInLeft", label: "Slide Left", desc: "Slide from left with fade" },
+      { id: "slideInUp", label: "Slide Up", desc: "Slide upwards with fade" },
+      { id: "scaleUp", label: "Scale Up", desc: "Expand outwards from 70%" },
+      { id: "bounce", label: "Bounce", desc: "Playful bounce settling at rest" },
+      { id: "rotateIn", label: "Rotate In", desc: "Rotate from -30° with fade" },
+      { id: "elasticPop", label: "Elastic Pop", desc: "Snappy spring pop overshoot" },
+      { id: "squashStretch", label: "Squash/Stretch", desc: "Organic jelly scale squeeze" },
+      { id: "maskRevealUp", label: "Mask Reveal", desc: "Reveal from clipped boundary" },
+      { id: "shiver", label: "Shiver/Glitch", desc: "Energetic translation shake" },
+      { id: "floatLoop", label: "Float Loop", desc: "Looping gentle vertical float" },
+      { id: "pulseLoop", label: "Pulse Loop", desc: "Looping breathing scale pulse" }
+    ];
+
+    // Initialize UI
+    window.onload = function() {
+      renderPresetCards();
+      setupBezierEditor();
+      updateSpringCurveVisualization();
+      
+      // Auto-select first preset to initialize preview
+      selectPreset(PRESETS_DATA[0].id);
+    };
+
+    // Render Preset Grid Cards
+    function renderPresetCards() {
+      var container = document.getElementById("presets-grid-container");
+      container.innerHTML = "";
+      PRESETS_DATA.forEach(function(p) {
+        var card = document.createElement("div");
+        card.className = "preset-card";
+        card.setAttribute("data-id", p.id);
+        card.onclick = function() { selectPreset(p.id); };
+        
+        card.innerHTML = 
+          '<div class="preset-card-title">' + p.label + '</div>' +
+          '<div class="preset-card-desc">' + p.desc + '</div>';
+        
+        container.appendChild(card);
+      });
+    }
+
+    // Tab switcher between workspace subsections
+    function switchWorkspaceTab(tabId) {
+      activeTab = tabId;
+      document.querySelectorAll(".tab-button").forEach(function(btn) {
+        btn.classList.remove("active");
+      });
+      document.querySelectorAll(".tab-content").forEach(function(cnt) {
+        cnt.classList.remove("active");
+      });
+
+      // Find active button and content panel
+      var btn = document.querySelector(".tab-button[onclick*='" + tabId + "']");
+      if (btn) btn.classList.add("active");
+
+      var content = document.getElementById("tab-" + tabId);
+      if (content) content.classList.add("active");
+
+      // Handle custom builder activation
+      if (tabId === 'custom') {
+        selectPreset('custom');
+      } else {
+        // Revert to last active preset if custom tab is left
+        if (activePresetId === 'custom') {
+          selectPreset(PRESETS_DATA[0].id);
+        }
+      }
+      
+      triggerLivePreview();
+      requestExportUpdate();
+    }
+
+    // Preset Selection
+    function selectPreset(id) {
+      activePresetId = id;
+      
+      // Toggle card styles
+      document.querySelectorAll(".preset-card").forEach(function(c) {
+        if (c.getAttribute("data-id") === id) {
+          c.classList.add("active");
+        } else {
+          c.classList.remove("active");
+        }
+      });
+
+      // Show/Hide parameters if custom mode
+      if (id === "custom") {
+        // Force workspace tab index visual consistency
+        var btn = document.querySelector(".tab-button[onclick*='custom']");
+        if (btn && !btn.classList.contains("active")) {
+          switchWorkspaceTab("custom");
+          return;
+        }
+      } else {
+        // Force switch back from custom builder view if standard card clicked
+        var tabBtn = document.querySelector(".tab-button[onclick*='custom']");
+        if (tabBtn && tabBtn.classList.contains("active")) {
+          switchWorkspaceTab("params");
+          return;
+        }
+      }
+
+      triggerLivePreview();
+      requestExportUpdate();
+    }
+
+    // Toggle Stagger section controls
+    function toggleStagger(enabled) {
+      var block = document.getElementById("stagger-controls-block");
+      block.style.opacity = enabled ? "1" : "0.4";
+      block.style.pointerEvents = enabled ? "auto" : "none";
+      requestExportUpdate();
+    }
+
+    // Stagger order dropdown changed
+    function onStaggerParamChanged() {
+      requestExportUpdate();
+    }
+
+    // Handle standard sliders value text updates
+    function updateSlider(id, value, suffix) {
+      var label = document.getElementById(id + "-val");
+      if (label) {
+        label.innerText = value + suffix;
+      }
+      
+      if (id === 'stagger-delay') {
+        requestExportUpdate();
+        return;
+      }
+      
+      triggerLivePreview();
+      requestExportUpdate();
+    }
+
+    // Playback Direction Segmented control
+    function setDirection(dir) {
+      activeDirection = dir;
+      document.querySelectorAll(".segment-item").forEach(function(item) {
+        if (item.getAttribute("data-dir") === dir) {
+          item.classList.add("active");
+        } else {
+          item.classList.remove("active");
+        }
+      });
+      triggerLivePreview();
+      requestExportUpdate();
+    }
+
+    // Listen to Easing dropdown changes
+    function onEasingChanged(val) {
+      document.getElementById("curve-editor-block").style.display = (val === "custom-bezier") ? "flex" : "none";
+      document.getElementById("spring-editor-block").style.display = (val === "custom-spring") ? "flex" : "none";
+      triggerLivePreview();
+      requestExportUpdate();
+    }
+
+    // Manage Spring Parameter updates
+    function updateSpringParam(param, val) {
+      springParams[param] = parseFloat(val);
+      var label = document.getElementById("spring-" + (param === "stiffness" ? "stiff" : (param === "damping" ? "damp" : "mass")) + "-val");
+      if (label) {
+        label.innerText = val;
+      }
+      updateSpringCurveVisualization();
+      triggerLivePreview();
+      requestExportUpdate();
+    }
+
+    // Draw decaying spring oscillation curve in SVG
+    function updateSpringCurveVisualization() {
+      var m = springParams.mass;
+      var k = springParams.stiffness;
+      var d = springParams.damping;
+
+      // Draw spring curve over 240 pixels width, settling around y=30
+      var pathD = "M 0,55 ";
+      var i;
+      for (i = 0; i <= 240; i++) {
+        var t = (i / 240) * 2.0; // simulate 2 seconds
+        
+        // Underdamped spring equation: y(t) = 1 - e^(-beta*t) * (cos(w_d*t) + beta/w_d * sin(w_d*t))
+        var beta = d / (2 * m);
+        var omega0 = Math.sqrt(k / m);
+        var wd = Math.sqrt(Math.max(0.01, (omega0*omega0) - (beta*beta)));
+        
+        var val = 1.0 - Math.exp(-beta * t) * (Math.cos(wd * t) + (beta / wd) * Math.sin(wd * t));
+        
+        // Map 0-1 values to SVG height 50 to 10 (settling around y=30)
+        var y = 50 - (val * 20);
+        pathD += "L " + i + "," + y.toFixed(1) + " ";
+      }
+
+      document.getElementById("spring-curve-path").setAttribute("d", pathD);
+    }
+
+    // SVG Drag-to-Edit Cubic Bezier Editor
+    function setupBezierEditor() {
+      var svg = document.getElementById("curve-canvas-svg");
+      var p1 = document.getElementById("handle-point-1");
+      var p2 = document.getElementById("handle-point-2");
+      
+      var isDraggingP1 = false;
+      var isDraggingP2 = false;
+
+      function getMouseCoords(e) {
+        var rect = svg.getBoundingClientRect();
+        var clientX = e.clientX || (e.touches && e.touches[0].clientX);
+        var clientY = e.clientY || (e.touches && e.touches[0].clientY);
+        
+        var x = clientX - rect.left;
+        var y = clientY - rect.top;
+        
+        // Clamp inside SVG boundary
+        x = Math.max(0, Math.min(120, x));
+        y = Math.max(0, Math.min(120, y));
+        return { x: x, y: y };
+      }
+
+      function handleStart(e) {
+        var target = e.target;
+        if (target === p1) isDraggingP1 = true;
+        if (target === p2) isDraggingP2 = true;
+        if (isDraggingP1 || isDraggingP2) {
+          e.preventDefault();
+        }
+      }
+
+      function handleMove(e) {
+        if (!isDraggingP1 && !isDraggingP2) return;
+        e.preventDefault();
+        var coords = getMouseCoords(e);
+        
+        if (isDraggingP1) {
+          // Normalize coordinates (0-1)
+          bezierPoints[0] = parseFloat((coords.x / 120).toFixed(2));
+          bezierPoints[1] = parseFloat(((120 - coords.y) / 120).toFixed(2));
+        } else if (isDraggingP2) {
+          bezierPoints[2] = parseFloat((coords.x / 120).toFixed(2));
+          bezierPoints[3] = parseFloat(((120 - coords.y) / 120).toFixed(2));
+        }
+        
+        drawBezierCurve();
+        triggerLivePreview();
+        requestExportUpdate();
+      }
+
+      function handleEnd() {
+        isDraggingP1 = false;
+        isDraggingP2 = false;
+      }
+
+      // Add mouse events
+      p1.addEventListener("mousedown", handleStart);
+      p2.addEventListener("mousedown", handleStart);
+      window.addEventListener("mousemove", handleMove);
+      window.addEventListener("mouseup", handleEnd);
+
+      // Add touch events
+      p1.addEventListener("touchstart", handleStart);
+      p2.addEventListener("touchstart", handleStart);
+      window.addEventListener("touchmove", handleMove, { passive: false });
+      window.addEventListener("touchend", handleEnd);
+
+      // Draw initial curve
+      drawBezierCurve();
+    }
+
+    // Draw bezier paths and update UI labels
+    function drawBezierCurve() {
+      var svg = document.getElementById("curve-canvas-svg");
+      var path = svg.querySelector(".bezier-curve-path");
+      
+      // Map 0-1 values back to 120x120 SVG space
+      var x1 = bezierPoints[0] * 120;
+      var y1 = 120 - (bezierPoints[1] * 120);
+      var x2 = bezierPoints[2] * 120;
+      var y2 = 120 - (bezierPoints[3] * 120);
+
+      // Update control handles and lines
+      document.getElementById("handle-point-1").setAttribute("cx", x1);
+      document.getElementById("handle-point-1").setAttribute("cy", y1);
+      document.getElementById("handle-point-2").setAttribute("cx", x2);
+      document.getElementById("handle-point-2").setAttribute("cy", y2);
+
+      document.getElementById("handle-line-1").setAttribute("x2", x1);
+      document.getElementById("handle-line-1").setAttribute("y2", y1);
+      document.getElementById("handle-line-2").setAttribute("x2", x2);
+      document.getElementById("handle-line-2").setAttribute("y2", y2);
+
+      // Update path
+      var d = "M 0 120 C " + x1.toFixed(1) + " " + y1.toFixed(1) + ", " + x2.toFixed(1) + " " + y2.toFixed(1) + ", 120 0";
+      path.setAttribute("d", d);
+
+      // Update labels
+      document.getElementById("bezier-p1-text").innerText = bezierPoints[0].toFixed(2) + ", " + bezierPoints[1].toFixed(2);
+      document.getElementById("bezier-p2-text").innerText = bezierPoints[2].toFixed(2) + ", " + bezierPoints[3].toFixed(2);
+    }
+
+    // Custom Keyframe Builder timeline stop selection
+    function selectKeyframeStop(stopVal) {
+      activeStop = stopVal;
+      
+      // Update stops indicator active state
+      document.querySelectorAll(".stop-dot").forEach(function(dot) {
+        if (parseInt(dot.getAttribute("data-stop"), 10) === stopVal) {
+          dot.classList.add("active");
+        } else {
+          dot.classList.remove("active");
+        }
+      });
+
+      document.getElementById("active-stop-label").innerText = stopVal + "%";
+      
+      // Load configured stop properties
+      var stopData = customKeyframes[String(stopVal)] || {};
+
+      // Opacity
+      var hasOpacity = stopData.opacity !== undefined;
+      document.getElementById("prop-opacity-enable").checked = hasOpacity;
+      document.getElementById("kf-opacity").value = hasOpacity ? stopData.opacity : 1.0;
+      document.getElementById("kf-opacity-val").innerText = hasOpacity ? stopData.opacity.toFixed(2) : "1.0";
+      document.getElementById("kf-opacity").disabled = !hasOpacity;
+
+      // Translate X
+      var hasX = stopData.x !== undefined;
+      document.getElementById("prop-x-enable").checked = hasX;
+      document.getElementById("kf-x").value = hasX ? stopData.x : 0;
+      document.getElementById("kf-x-val").innerText = hasX ? stopData.x + "px" : "0px";
+      document.getElementById("kf-x").disabled = !hasX;
+
+      // Translate Y
+      var hasY = stopData.y !== undefined;
+      document.getElementById("prop-y-enable").checked = hasY;
+      document.getElementById("kf-y").value = hasY ? stopData.y : 0;
+      document.getElementById("kf-y-val").innerText = hasY ? stopData.y + "px" : "0px";
+      document.getElementById("kf-y").disabled = !hasY;
+
+      // Scale
+      var hasScale = stopData.scaleX !== undefined;
+      document.getElementById("prop-scale-enable").checked = hasScale;
+      document.getElementById("kf-scale").value = hasScale ? stopData.scaleX : 1.0;
+      document.getElementById("kf-scale-val").innerText = hasScale ? stopData.scaleX.toFixed(2) + "x" : "1.0x";
+      document.getElementById("kf-scale").disabled = !hasScale;
+
+      // Rotation
+      var hasRot = stopData.rotation !== undefined;
+      document.getElementById("prop-rotation-enable").checked = hasRot;
+      document.getElementById("kf-rotation").value = hasRot ? stopData.rotation : 0;
+      document.getElementById("kf-rotation-val").innerText = hasRot ? stopData.rotation + "°" : "0°";
+      document.getElementById("kf-rotation").disabled = !hasRot;
+    }
+
+    // Toggle property on/off for active keyframe stop
+    function toggleKeyframeProp(prop, checked) {
+      var stopStr = String(activeStop);
+      if (!customKeyframes[stopStr]) {
+        customKeyframes[stopStr] = {};
+      }
+
+      var input = document.getElementById("kf-" + prop);
+      input.disabled = !checked;
+
+      if (checked) {
+        // Set default value
+        if (prop === 'opacity') customKeyframes[stopStr].opacity = 1.0;
+        else if (prop === 'x') customKeyframes[stopStr].x = 0;
+        else if (prop === 'y') customKeyframes[stopStr].y = 0;
+        else if (prop === 'scale') {
+          customKeyframes[stopStr].scaleX = 1.0;
+          customKeyframes[stopStr].scaleY = 1.0;
+        }
+        else if (prop === 'rotation') customKeyframes[stopStr].rotation = 0;
+      } else {
+        // Delete property
+        if (prop === 'scale') {
+          delete customKeyframes[stopStr].scaleX;
+          delete customKeyframes[stopStr].scaleY;
+        } else {
+          delete customKeyframes[stopStr][prop];
+        }
+      }
+
+      // If keyframe has no properties, clean up the stop index
+      if (Object.keys(customKeyframes[stopStr]).length === 0 && stopStr !== "0" && stopStr !== "100") {
+        delete customKeyframes[stopStr];
+      }
+
+      updateStopsConfiguredState();
+      triggerLivePreview();
+      requestExportUpdate();
+    }
+
+    // Update property value inside keyframe database
+    function updateKeyframeVal(prop, value) {
+      var stopStr = String(activeStop);
+      if (!customKeyframes[stopStr]) {
+        customKeyframes[stopStr] = {};
+      }
+
+      var numVal = parseFloat(value);
+      var label = document.getElementById("kf-" + prop + "-val");
+
+      if (prop === 'opacity') {
+        customKeyframes[stopStr].opacity = numVal;
+        label.innerText = numVal.toFixed(2);
+      } else if (prop === 'x') {
+        customKeyframes[stopStr].x = numVal;
+        label.innerText = numVal + "px";
+      } else if (prop === 'y') {
+        customKeyframes[stopStr].y = numVal;
+        label.innerText = numVal + "px";
+      } else if (prop === 'scale') {
+        customKeyframes[stopStr].scaleX = numVal;
+        customKeyframes[stopStr].scaleY = numVal;
+        label.innerText = numVal.toFixed(2) + "x";
+      } else if (prop === 'rotation') {
+        customKeyframes[stopStr].rotation = numVal;
+        label.innerText = numVal + "°";
+      }
+
+      triggerLivePreview();
+      requestExportUpdate();
+    }
+
+    // Refresh configured border rings on stops timeline
+    function updateStopsConfiguredState() {
+      document.querySelectorAll(".stop-dot").forEach(function(dot) {
+        var val = dot.getAttribute("data-stop");
+        if (customKeyframes[val] && Object.keys(customKeyframes[val]).length > 0) {
+          dot.classList.add("configured");
+        } else {
+          dot.classList.remove("configured");
+        }
+      });
+    }
+
+    // Retrieve full UI state parameter payload
+    function getParamsPayload() {
+      // Formulate custom keyframe array from timeline stops
+      var customArr = [];
+      var keys = Object.keys(customKeyframes).map(Number).sort(function(a,b){return a-b;});
+      keys.forEach(function(key) {
+        var item = JSON.parse(JSON.stringify(customKeyframes[String(key)]));
+        item.t = key / 100;
+        customArr.push(item);
+      });
+
+      return {
+        duration: parseInt(document.getElementById("duration").value, 10),
+        easing: document.getElementById("easing").value,
+        delay: parseInt(document.getElementById("delay").value, 10),
+        direction: activeDirection,
+        intensity: parseFloat(document.getElementById("intensity").value),
+        staggerEnabled: document.getElementById("stagger-toggle").checked,
+        staggerOrder: document.getElementById("stagger-order").value,
+        staggerDelay: parseInt(document.getElementById("stagger-delay").value, 10),
+        bezierPoints: bezierPoints,
+        springParams: springParams,
+        customKeyframes: customArr
+      };
+    }
+
+    // Trigger local CSS Keyframes Live Preview on the UI element
+    function triggerLivePreview() {
+      var element = document.getElementById("preview-element");
+      if (!element) return;
+
+      var params = getParamsPayload();
+      
+      // Generate preview CSS styles
+      var styleTag = document.getElementById("dynamic-preview-styles");
+      if (!styleTag) {
+        styleTag = document.createElement("style");
+        styleTag.id = "dynamic-preview-styles";
+        document.head.appendChild(styleTag);
+      }
+
+      // Build keyframe string based on active preset
+      var keyframesCSS = "";
+      var intensity = params.intensity;
+
+      if (activePresetId === "fadeIn") {
+        keyframesCSS = "@keyframes ui-preview {\n" +
+                       "  0% { opacity: 0; }\n" +
+                       "  40% { opacity: 0.6; }\n" +
+                       "  70% { opacity: 0.9; }\n" +
+                       "  100% { opacity: 1; }\n" +
+                       "}";
+      } else if (activePresetId === "slideInLeft") {
+        keyframesCSS = "@keyframes ui-preview {\n" +
+                       "  0% { opacity: 0; transform: translateX(" + (-50 * intensity) + "px); }\n" +
+                       "  35% { opacity: 0.5; transform: translateX(" + (-15 * intensity) + "px); }\n" +
+                       "  65% { opacity: 0.85; transform: translateX(" + (-3 * intensity) + "px); }\n" +
+                       "  100% { opacity: 1; transform: translateX(0); }\n" +
+                       "}";
+      } else if (activePresetId === "slideInUp") {
+        keyframesCSS = "@keyframes ui-preview {\n" +
+                       "  0% { opacity: 0; transform: translateY(" + (50 * intensity) + "px); }\n" +
+                       "  35% { opacity: 0.5; transform: translateY(" + (15 * intensity) + "px); }\n" +
+                       "  65% { opacity: 0.85; transform: translateY(" + (3 * intensity) + "px); }\n" +
+                       "  100% { opacity: 1; transform: translateY(0); }\n" +
+                       "}";
+      } else if (activePresetId === "scaleUp") {
+        keyframesCSS = "@keyframes ui-preview {\n" +
+                       "  0% { opacity: 0; transform: scale(" + (1.0 - 0.3 * intensity) + "); }\n" +
+                       "  40% { opacity: 0.6; transform: scale(" + (1.0 - 0.12 * intensity) + "); }\n" +
+                       "  70% { opacity: 0.92; transform: scale(" + (1.0 - 0.03 * intensity) + "); }\n" +
+                       "  100% { opacity: 1; transform: scale(1.0); }\n" +
+                       "}";
+      } else if (activePresetId === "bounce") {
+        keyframesCSS = "@keyframes ui-preview {\n" +
+                       "  0%, 100% { transform: translateY(0); }\n" +
+                       "  18% { transform: translateY(" + (-22 * intensity) + "px); }\n" +
+                       "  36% { transform: translateY(0); }\n" +
+                       "  50% { transform: translateY(" + (-10 * intensity) + "px); }\n" +
+                       "  64% { transform: translateY(0); }\n" +
+                       "  76% { transform: translateY(" + (-4 * intensity) + "px); }\n" +
+                       "  88% { transform: translateY(0); }\n" +
+                       "}";
+      } else if (activePresetId === "rotateIn") {
+        keyframesCSS = "@keyframes ui-preview {\n" +
+                       "  0% { opacity: 0; transform: rotate(" + (-25 * intensity) + "deg); }\n" +
+                       "  35% { opacity: 0.5; transform: rotate(" + (-8 * intensity) + "deg); }\n" +
+                       "  70% { opacity: 0.9; transform: rotate(" + (-1 * intensity) + "deg); }\n" +
+                       "  100% { opacity: 1; transform: rotate(0deg); }\n" +
+                       "}";
+      } else if (activePresetId === "elasticPop") {
+        keyframesCSS = "@keyframes ui-preview {\n" +
+                       "  0% { opacity: 0; transform: scale(" + (1.0 - 0.7 * intensity) + "); }\n" +
+                       "  35% { opacity: 0.7; transform: scale(" + (1.0 - 0.15 * intensity) + "); }\n" +
+                       "  55% { opacity: 0.9; transform: scale(" + (1.0 + 0.08 * intensity) + "); }\n" +
+                       "  72% { transform: scale(" + (1.0 - 0.03 * intensity) + "); }\n" +
+                       "  86% { transform: scale(" + (1.0 + 0.02 * intensity) + "); }\n" +
+                       "  100% { opacity: 1; transform: scale(1.0); }\n" +
+                       "}";
+      } else if (activePresetId === "squashStretch") {
+        keyframesCSS = "@keyframes ui-preview {\n" +
+                       "  0%, 100% { transform: scale(1) translateY(0); }\n" +
+                       "  12% { transform: scale(" + (1.0 + 0.18 * intensity) + ", " + (1.0 - 0.18 * intensity) + ") translateY(" + (8 * intensity) + "px); }\n" +
+                       "  30% { transform: scale(" + (1.0 - 0.12 * intensity) + ", " + (1.0 + 0.12 * intensity) + ") translateY(" + (-6 * intensity) + "px); }\n" +
+                       "  50% { transform: scale(" + (1.0 - 0.18 * intensity) + ", " + (1.0 + 0.18 * intensity) + ") translateY(" + (-16 * intensity) + "px); }\n" +
+                       "  68% { transform: scale(" + (1.0 + 0.06 * intensity) + ", " + (1.0 - 0.06 * intensity) + ") translateY(" + (3 * intensity) + "px); }\n" +
+                       "  82% { transform: scale(" + (1.0 - 0.03 * intensity) + ", " + (1.0 + 0.03 * intensity) + ") translateY(" + (-1 * intensity) + "px); }\n" +
+                       "}";
+      } else if (activePresetId === "maskRevealUp") {
+        keyframesCSS = "@keyframes ui-preview {\n" +
+                       "  0% { opacity: 0; transform: translateY(" + (40 * intensity) + "px); }\n" +
+                       "  30% { opacity: 0.4; transform: translateY(" + (14 * intensity) + "px); }\n" +
+                       "  65% { opacity: 0.85; transform: translateY(" + (3 * intensity) + "px); }\n" +
+                       "  100% { opacity: 1; transform: translateY(0); }\n" +
+                       "}";
+      } else if (activePresetId === "shiver") {
+        keyframesCSS = "@keyframes ui-preview {\n" +
+                       "  0%, 100% { transform: translate(0,0); }\n" +
+                       "  10% { transform: translate(" + (-5 * intensity) + "px, " + (2 * intensity) + "px); }\n" +
+                       "  20% { transform: translate(" + (5 * intensity) + "px, " + (-2 * intensity) + "px); }\n" +
+                       "  30% { transform: translate(" + (-4 * intensity) + "px, " + (2 * intensity) + "px); }\n" +
+                       "  40% { transform: translate(" + (4 * intensity) + "px, " + (-2 * intensity) + "px); }\n" +
+                       "  55% { transform: translate(" + (-2 * intensity) + "px, " + (1 * intensity) + "px); }\n" +
+                       "  70% { transform: translate(" + (2 * intensity) + "px, " + (-1 * intensity) + "px); }\n" +
+                       "  85% { transform: translate(" + (-1 * intensity) + "px, 0); }\n" +
+                       "}";
+      } else if (activePresetId === "floatLoop") {
+        keyframesCSS = "@keyframes ui-preview {\n" +
+                       "  0%, 100% { transform: translateY(0); }\n" +
+                       "  25% { transform: translateY(" + (-8 * intensity) + "px); }\n" +
+                       "  50% { transform: translateY(" + (-13 * intensity) + "px); }\n" +
+                       "  75% { transform: translateY(" + (-8 * intensity) + "px); }\n" +
+                       "}";
+      } else if (activePresetId === "pulseLoop") {
+        keyframesCSS = "@keyframes ui-preview {\n" +
+                       "  0%, 100% { transform: scale(1); }\n" +
+                       "  25% { transform: scale(" + (1.0 + 0.03 * intensity) + "); }\n" +
+                       "  50% { transform: scale(" + (1.0 + 0.06 * intensity) + "); }\n" +
+                       "  75% { transform: scale(" + (1.0 + 0.03 * intensity) + "); }\n" +
+                       "}";
+      } else if (activePresetId === "custom") {
+        // Dynamically compile custom keyframes to standard CSS
+        keyframesCSS = "@keyframes ui-preview {\n";
+        params.customKeyframes.forEach(function(kf) {
+          var pct = Math.round(kf.t * 100) + "%";
+          keyframesCSS += "  " + pct + " {\n";
+          if (kf.opacity !== undefined) keyframesCSS += "    opacity: " + kf.opacity + ";\n";
+          
+          var t = [];
+          if (kf.x !== undefined) t.push("translateX(" + (kf.x * intensity) + "px)");
+          if (kf.y !== undefined) t.push("translateY(" + (kf.y * intensity) + "px)");
+          if (kf.scaleX !== undefined) t.push("scale(" + kf.scaleX + ")");
+          if (kf.rotation !== undefined) t.push("rotate(" + (kf.rotation * intensity) + "deg)");
+          
+          if (t.length > 0) {
+            keyframesCSS += "    transform: " + t.join(" ") + ";\n";
+          }
+          keyframesCSS += "  }\n";
+        });
+        keyframesCSS += "}";
+      }
+
+      styleTag.innerHTML = keyframesCSS;
+
+      // Handle custom easing curves mapping — expo-out as default for buttery feel
+      var cssEasing = params.easing;
+      if (params.easing === 'ease') {
+        cssEasing = 'cubic-bezier(0.16, 1, 0.3, 1)'; // expo-out — silky smooth
+      } else if (params.easing === 'spring') {
+        cssEasing = 'cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+      } else if (params.easing === 'custom-bezier') {
+        cssEasing = 'cubic-bezier(' + bezierPoints.join(',') + ')';
+      } else if (params.easing === 'custom-spring') {
+        cssEasing = 'cubic-bezier(0.25, 1, 0.5, 1)';
+      }
+
+      // Loop type setups
+      var iterationCount = "1";
+      if (activePresetId.indexOf("Loop") !== -1) {
+        iterationCount = "infinite";
+      }
+
+      // Reset and play local CSS animation
+      element.style.animation = 'none';
+      void element.offsetWidth; // Reflow trigger
+      
+      element.style.animation = "ui-preview " + params.duration + "ms " + cssEasing + " " + params.delay + "ms " + iterationCount + " " + params.direction + " forwards";
+
+      // Synced timeline scrubbing reset
+      if (isPlaying) {
+        stopPreviewTimelineLoop();
+      }
+      startPreviewTimelineLoop(params.duration, params.delay);
+    }
+
+    // Animation progress loop helper
+    function startPreviewTimelineLoop(duration, delay) {
+      var scrubber = document.getElementById("preview-scrubber");
+      var timeText = document.getElementById("preview-time-text");
+      var playBtn = document.getElementById("preview-play-btn");
+      
+      isPlaying = true;
+      playBtn.innerText = "⏸";
+      
+      previewStartTime = performance.now();
+      
+      var totalDuration = duration + delay;
+
+      function updateTimelineScrubber(timestamp) {
+        if (!isPlaying) return;
+        
+        var elapsed = timestamp - previewStartTime;
+        var progress = Math.min(1.0, elapsed / totalDuration);
+        
+        scrubber.value = Math.round(progress * 100);
+        timeText.innerText = (elapsed / 1000).toFixed(1) + "s";
+
+        if (progress < 1.0) {
+          previewAnimFrame = requestAnimationFrame(updateTimelineScrubber);
+        } else {
+          // Loop or stop
+          if (activePresetId.indexOf("Loop") !== -1) {
+            previewStartTime = performance.now();
+            previewAnimFrame = requestAnimationFrame(updateTimelineScrubber);
+          } else {
+            isPlaying = false;
+            playBtn.innerText = "▶";
+          }
+        }
+      }
+      
+      previewAnimFrame = requestAnimationFrame(updateTimelineScrubber);
+    }
+
+    function stopPreviewTimelineLoop() {
+      isPlaying = false;
+      var playBtn = document.getElementById("preview-play-btn");
+      if (playBtn) playBtn.innerText = "▶";
+      if (previewAnimFrame) {
+        cancelAnimationFrame(previewAnimFrame);
+      }
+    }
+
+    function togglePlayPreview() {
+      if (isPlaying) {
+        stopPreviewTimelineLoop();
+        // Pause CSS animation style
+        document.getElementById("preview-element").style.animationPlayState = 'paused';
+      } else {
+        triggerLivePreview();
+      }
+    }
+
+    // Scrub through timeline manually
+    function scrubPreview(percentVal) {
+      stopPreviewTimelineLoop();
+      
+      var element = document.getElementById("preview-element");
+      var params = getParamsPayload();
+      var totalDuration = params.duration + params.delay;
+      var elapsed = (percentVal / 100) * totalDuration;
+
+      document.getElementById("preview-time-text").innerText = (elapsed / 1000).toFixed(1) + "s";
+      
+      // Pause element animation state
+      element.style.animationPlayState = 'paused';
+      
+      // Apply direct styles for scrub frames based on keyframe progress
+      var progress = elapsed / totalDuration;
+      // Map basic opacity / transforms manually for a responsive slider
+      var t = Math.max(0, Math.min(1, (elapsed - params.delay) / params.duration));
+      
+      // Simple visual scrubbing approximation
+      element.style.opacity = String(t);
+      element.style.transform = "scale(" + (0.7 + t * 0.3) + ")";
+    }
+
+    // Request new code generation from main thread
+    function requestExportUpdate() {
+      if (!activePresetId) return;
+
+      parent.postMessage({
+        pluginMessage: {
+          type: 'EXPORT_CODE',
+          presetId: activePresetId,
+          params: getParamsPayload(),
+          format: activeExportFormat
+        }
+      }, '*');
+    }
+
+    // Switch export tabs
+    function switchExportTab(format) {
+      activeExportFormat = format;
+      document.querySelectorAll(".export-tab").forEach(function(tab) {
+        if (tab.getAttribute("data-format") === format) {
+          tab.classList.add("active");
+        } else {
+          tab.classList.remove("active");
+        }
+      });
+      requestExportUpdate();
+    }
+
+    // Copy to Clipboard with animated feedback
+    function copyExportedCode() {
+      var textarea = document.getElementById("code-output");
+      var copyBtn = document.getElementById("copy-btn");
+      
+      textarea.focus();
+      textarea.select();
+
+      try {
+        var successful = document.execCommand('copy');
+        if (successful) {
+          var origText = copyBtn.innerText;
+          copyBtn.innerText = 'Code Copied! ✓';
+          copyBtn.style.color = '#10b981';
+          copyBtn.style.borderColor = '#10b981';
+          
+          setTimeout(function() {
+            copyBtn.innerText = origText;
+            copyBtn.style.color = 'var(--text-primary)';
+            copyBtn.style.borderColor = 'var(--border-light)';
+          }, 2000);
+        }
+      } catch (err) {
+        copyBtn.innerText = 'Copy Failed';
+      }
+    }
+
+    // Trigger Apply preset command to figma sandbox
+    function applyPresetToCanvas() {
+      if (!activePresetId || !hasSelection) return;
+      
+      var applyBtn = document.getElementById('apply-btn');
+      applyBtn.disabled = true;
+      applyBtn.innerText = "Applying preset...";
+
+      parent.postMessage({
+        pluginMessage: {
+          type: 'APPLY_PRESET',
+          presetId: activePresetId,
+          params: getParamsPayload()
+        }
+      }, '*');
+    }
+
+    // Handle messages received from Figma Sandbox main thread
+    window.onmessage = function(event) {
+      var msg = event.data.pluginMessage;
+      if (!msg) return;
+
+      if (msg.type === 'SELECTION_CHANGED') {
+        var pill = document.getElementById("selection-pill");
+        var screenEmpty = document.getElementById("screen-empty");
+        var screenWorkspace = document.getElementById("screen-workspace");
+        
+        var applyBtn = document.getElementById("apply-btn");
+        var copyBtn = document.getElementById("copy-btn");
+
+        if (msg.hasSelection) {
+          hasSelection = true;
+          pill.innerText = msg.name;
+          pill.title = msg.name;
+          pill.classList.remove("empty");
+          
+          screenEmpty.style.display = "none";
+          screenWorkspace.style.display = "flex";
+          
+          applyBtn.disabled = false;
+          copyBtn.disabled = false;
+          
+          // Refresh preview and export
+          triggerLivePreview();
+          requestExportUpdate();
+        } else {
+          hasSelection = false;
+          pill.innerText = msg.notAFrame ? "Select Frame Node" : "No Selection";
+          pill.classList.add("empty");
+          
+          screenEmpty.style.display = "flex";
+          screenWorkspace.style.display = "none";
+          
+          applyBtn.disabled = true;
+          copyBtn.disabled = true;
+          stopPreviewTimelineLoop();
+        }
+      } 
+      
+      else if (msg.type === 'EXPORT_RESULT') {
+        var textarea = document.getElementById("code-output");
+        textarea.value = msg.code;
+      } 
+      
+      else if (msg.type === 'DONE') {
+        var applyBtn = document.getElementById('apply-btn');
+        applyBtn.disabled = false;
+        applyBtn.innerHTML = '<svg class="icon-svg" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Apply to Canvas';
+        triggerLivePreview();
+      }
+    };
+  </script>
+</body>
+</html>
